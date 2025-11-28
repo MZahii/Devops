@@ -2,8 +2,7 @@
        agent any
 
        tools {
-           maven 'M2_HOME'
-           jdk 'jdk17'
+            maven 'M2_HOME'
        }
 
        environment {
