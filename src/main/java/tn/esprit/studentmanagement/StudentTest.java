@@ -43,7 +43,7 @@ class StudentTest {
         Student s2 = new Student(2L, "Yassine", "Chakroun", "Djappa@test.com", "0000", date, "Kram", dept, enrollments);
 
         assertEquals(2L, s2.getIdStudent());
-        assertEquals("Ali", s2.getFirstName());
+        assertEquals("Yassine", s2.getFirstName());
 
         // --- TEST 3 : toString (@ToString) ---
         // Cela permet de couvrir aussi la méthode toString générée par Lombok
