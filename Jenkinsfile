@@ -1,66 +1,61 @@
-pipeline {
-    agent any
+    pipeline {
+       agent any
 
-    tools {
-        maven 'M2_HOME'
-    }
+       tools {
+           maven 'M2_HOME'
+           jdk 'jdk17'
+       }
 
-    environment {
-        IMAGE_NAME = 'zehim/devops-project:latest'
-        DOCKER_CREDENTIALS_ID = 'c85ad107-c988-416f-b3d7-7d25ce9599e0'
-    }
+       environment {
+           IMAGE_NAME = 'zehim/devops-project:latest'
+           // Assure-toi d'avoir une credential avec cet ID exact dans Jenkins
+            DOCKER_CREDENTIALS_ID = 'c85ad107-c988-416f-b3d7-7d25ce9599e0'
+           // Récupère l'outil scanner configuré dans l'étape 3
+           SCANNER_HOME = tool 'sonar-scanner'
+       }
 
-    stages {
-        stage('Checkout') {
-            steps {
-                git branch: 'main', url: 'https://github.com/MZahii/Devops.git'
-            }
-        }
+       stages {
+           stage('Checkout') {
+               steps {
+                   git branch: 'main', url: 'https://github.com/MZahii/Devops.git'
+               }
+           }
 
-        stage('Build & Package') {
-            steps {
-                sh 'mvn clean package -DskipTests'
-            }
-        }
+           stage('Build & Test & Coverage') {
+               steps {
+                   // Lance les tests et crée le rapport jacoco.xml
+                   sh 'mvn clean verify -DskipTests=false'
+               }
+           }
 
-        stage('DEBUG: System Check') {
-            steps {
-                script {
-                    echo "🔍 --- CHECKING FILES ---"
-                    // List all files to see if Dockerfile exists
-                    sh 'ls -la' 
-                    
-                    echo "👤 --- CHECKING USER ---"
-                    // Check which user Jenkins is running as
-                    sh 'whoami' 
-                    sh 'id'
+           stage('SonarQube Analysis') {
+               steps {
+                   withSonarQubeEnv('sonar-server') {
+                       sh """
+                           ${SCANNER_HOME}/bin/sonar-scanner \
+                           -Dsonar.projectKey=student-management \
+                           -Dsonar.projectName="Student Management" \
+                           -Dsonar.sources=src/main/java \
+                           -Dsonar.java.binaries=target/classes \
+                           -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+                       """
+                   }
+               }
+           }
 
-                    echo "🐳 --- CHECKING DOCKER PERMISSIONS ---"
-                    // Check if Jenkins can talk to Docker
-                    sh 'docker info' 
-                }
-            }
-        }
+           stage('Docker Build') {
+               steps {
+                   sh "docker build -t ${IMAGE_NAME} ."
+               }
+           }
 
-        stage('Docker Build') {
-            steps {
-                echo '🔨 Building...'
-                // Using double quotes for better variable safety
-                sh "docker build -t ${IMAGE_NAME} ."
-            }
-        }
-        
-        stage('Docker Push') {
-             steps {
-                script {
-                    echo "🚀 Tentative de connexion et push..."
-                    withCredentials([usernamePassword(credentialsId: "$DOCKER_CREDENTIALS_ID", usernameVariable: 'USER', passwordVariable: 'PASS')]) {
-                        // Méthode directe sans pipe (plus robuste pour le debug)
-                        sh "docker login -u ${USER} -p ${PASS}"
-                        sh "docker push ${IMAGE_NAME}"
-                    }
-                }
-            }
-        }
-    }
-}
+           stage('Docker Push') {
+                steps {
+                   withCredentials([usernamePassword(credentialsId: "$DOCKER_CREDENTIALS_ID", usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                       sh "docker login -u ${USER} -p ${PASS}"
+                       sh "docker push ${IMAGE_NAME}"
+                   }
+               }
+           }
+       }
+   }
