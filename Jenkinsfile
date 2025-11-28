@@ -52,9 +52,13 @@ pipeline {
         
         stage('Docker Push') {
              steps {
-                withCredentials([usernamePassword(credentialsId: "$DOCKER_CREDENTIALS_ID", usernameVariable: 'USER', passwordVariable: 'PASS')]) {
-                    sh 'echo $PASS | docker login -u $USER --password-stdin'
-                    sh "docker push ${IMAGE_NAME}"
+                script {
+                    echo "🚀 Tentative de connexion et push..."
+                    withCredentials([usernamePassword(credentialsId: "$DOCKER_CREDENTIALS_ID", usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                        // Méthode directe sans pipe (plus robuste pour le debug)
+                        sh "docker login -u ${USER} -p ${PASS}"
+                        sh "docker push ${IMAGE_NAME}"
+                    }
                 }
             }
         }
