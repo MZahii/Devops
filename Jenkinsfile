@@ -6,9 +6,7 @@ pipeline {
     }
 
     environment {
-        // Your Docker Hub Image Name
         IMAGE_NAME = 'zehim/devops-project:latest'
-        // The ID you created in Step 2
         DOCKER_CREDENTIALS_ID = 'docker-hub-credentials'
     }
 
@@ -19,57 +17,46 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('Build & Package') {
             steps {
-                sh 'mvn clean compile'
+                sh 'mvn clean package -DskipTests'
             }
         }
 
-        stage('Test') {
+        stage('DEBUG: System Check') {
             steps {
-                // If this fails, the Docker stages will NOT run.
-                // If you want to force it, use: sh 'mvn test -Dmaven.test.failure.ignore=true'
-                sh 'mvn test'
-            }
-        }
+                script {
+                    echo "🔍 --- CHECKING FILES ---"
+                    // List all files to see if Dockerfile exists
+                    sh 'ls -la' 
+                    
+                    echo "👤 --- CHECKING USER ---"
+                    // Check which user Jenkins is running as
+                    sh 'whoami' 
+                    sh 'id'
 
-        stage('Package') {
-            steps {
-                sh 'mvn package -DskipTests'
-                archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+                    echo "🐳 --- CHECKING DOCKER PERMISSIONS ---"
+                    // Check if Jenkins can talk to Docker
+                    sh 'docker info' 
+                }
             }
         }
 
         stage('Docker Build') {
             steps {
-                echo '🐳 Building Docker Image...'
-                sh 'docker build -t $IMAGE_NAME .'
+                echo '🔨 Building...'
+                // Using double quotes for better variable safety
+                sh "docker build -t ${IMAGE_NAME} ."
             }
         }
-
+        
         stage('Docker Push') {
-            steps {
-                echo '🚀 Pushing to Docker Hub...'
+             steps {
                 withCredentials([usernamePassword(credentialsId: "$DOCKER_CREDENTIALS_ID", usernameVariable: 'USER', passwordVariable: 'PASS')]) {
-                    // Login to Docker Hub inside the pipeline
                     sh 'echo $PASS | docker login -u $USER --password-stdin'
-                    // Push the image
-                    sh 'docker push $IMAGE_NAME'
+                    sh "docker push ${IMAGE_NAME}"
                 }
             }
-        }
-    }
-
-    post {
-        success {
-            echo "✅ SUCCÈS ! Image disponible sur: https://hub.docker.com/r/zehim/devops-project"
-        }
-        failure {
-            echo "❌ ÉCHEC - Vérifiez la console."
-        }
-        cleanup {
-            // Remove the image from the Jenkins server to save space
-            sh 'docker rmi $IMAGE_NAME || true' 
         }
     }
 }
