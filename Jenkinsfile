@@ -8,6 +8,7 @@ pipeline {
     environment {
         IMAGE_NAME = 'zehim/devops-project:latest'
         DOCKER_CREDENTIALS_ID = 'docker-hub-credentials'
+    }
     stages {
         stage('Checkout') {
             steps {
