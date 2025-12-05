@@ -27,10 +27,17 @@ pipeline {
             }
         }
 
-        stage('SonarQube Analysis') {
+    stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('sonar-server') {
-                    sh 'mvn sonar:sonar -Dsonar.projectKey=student-management -Dsonar.projectName="Student Management" -Dsonar.coverage.exclusions=**/model/**,**/entity/**,**/dto/**'
+                    // We added -Dsonar.host.url to force connection to the host machine IP
+                    sh '''
+                      mvn sonar:sonar \
+                      -Dsonar.projectKey=student-management \
+                      -Dsonar.projectName="Student Management" \
+                      -Dsonar.coverage.exclusions=**/model/**,**/entity/**,**/dto/** \
+                      -Dsonar.host.url=http://172.17.0.1:9005
+                    '''
                 }
             }
         }
