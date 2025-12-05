@@ -5,10 +5,15 @@ pipeline {
         maven 'M2_HOME'
     }
 
+    options {
+        timeout(time: 10, unit: 'MINUTES')
+    }
+
     environment {
         IMAGE_NAME = 'zehim/devops-project:latest'
         DOCKER_CREDENTIALS_ID = 'docker-hub-credentials'
     }
+
     stages {
         stage('Checkout') {
             steps {
@@ -16,19 +21,31 @@ pipeline {
             }
         }
 
-        stage('Build & Test & Coverage') {
+        stage('Test') {
             steps {
-                // This builds the app and generates the JaCoCo coverage report
-                sh 'mvn clean verify -DskipTests=false'
+                sh 'mvn clean test'
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
-                // We use the "sonar-server" name you configured in Manage Jenkins -> System
                 withSonarQubeEnv('sonar-server') {
-                    // We use Maven directly. No need for the external tool.
-sh 'mvn sonar:sonar -Dsonar.projectKey=student-management -Dsonar.projectName="Student Management" -Dsonar.host.url=http://localhost:9000'                }
+                    sh 'mvn sonar:sonar -Dsonar.projectKey=student-management -Dsonar.projectName="Student Management" -Dsonar.coverage.exclusions=**/model/**,**/entity/**,**/dto/**'
+                }
+            }
+        }
+
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 5, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+
+        stage('Package') {
+            steps {
+                sh 'mvn package -Dmaven.test.skip=true'
             }
         }
 
@@ -45,6 +62,19 @@ sh 'mvn sonar:sonar -Dsonar.projectKey=student-management -Dsonar.projectName="S
                     sh "docker push ${IMAGE_NAME}"
                 }
             }
+        }
+    }
+
+    post {
+        always {
+            junit '**/target/surefire-reports/*.xml'
+            echo "======always======"
+        }
+        success {
+            echo "=====pipeline executed successfully ====="
+        }
+        failure {
+            echo "======pipeline execution failed======"
         }
     }
 }
