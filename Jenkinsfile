@@ -5,7 +5,7 @@ pipeline {
         maven 'M2_HOME'
     }
 
-    // PDF Requirement: Timeout option
+    // PDF Requirement: Timeout
     options {
         timeout(time: 10, unit: 'MINUTES')
     }
@@ -16,25 +16,26 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
+        stage('Code Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/MZahii/Devops.git'
             }
         }
 
-        // STAGE 1: Run Tests & Generate Coverage (No packaging yet)
-        stage('Test') {
+        // STAGE 1: Unit Tests
+        // We run tests here to generate the surefire-reports and JaCoCo data
+        stage('Unit Tests') {
             steps {
                 sh 'mvn clean test'
             }
         }
 
-        // STAGE 2: SonarQube
+        // STAGE 2: SonarQube Analysis
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('sonar-server') {
-                    // 1. Restored localhost:9000 (It worked in your old file)
-                    // 2. Added exclusions for entities/models
+                    // FIX: Changed port back to 9000 because your working file used 9000.
+                    // Kept the coverage exclusions for entities.
                     sh '''
                       mvn sonar:sonar \
                       -Dsonar.projectKey=student-management \
@@ -55,10 +56,10 @@ pipeline {
             }
         }
 
-        // STAGE 4: Package (Build JAR, skip tests because we did them in Stage 1)
-        stage('Package') {
+        // STAGE 4: Package (Build)
+        // PDF Requirement: Use -Dmaven.test.skip=true
+        stage('Code Build') {
             steps {
-                // Using the syntax from your PDF
                 sh 'mvn package -Dmaven.test.skip=true'
             }
         }
@@ -79,7 +80,7 @@ pipeline {
         }
     }
 
-    // PDF Requirement: Post block
+    // PDF Requirement: Post Actions
     post {
         always {
             junit '**/target/surefire-reports/*.xml'
