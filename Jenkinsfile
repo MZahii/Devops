@@ -28,8 +28,7 @@ pipeline {
                 // We use the "sonar-server" name you configured in Manage Jenkins -> System
                 withSonarQubeEnv('sonar-server') {
                     // We use Maven directly. No need for the external tool.
-                    sh 'mvn sonar:sonar -Dsonar.projectKey=student-management -Dsonar.projectName="Student Management"'
-                }
+sh 'mvn sonar:sonar -Dsonar.projectKey=student-management -Dsonar.projectName="Student Management" -Dsonar.host.url=http://localhost:9000'                }
             }
         }
 
