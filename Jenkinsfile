@@ -5,7 +5,6 @@ pipeline {
         maven 'M2_HOME'
     }
 
-    // PDF Requirement: Timeout
     options {
         timeout(time: 10, unit: 'MINUTES')
     }
@@ -16,26 +15,23 @@ pipeline {
     }
 
     stages {
-        stage('Code Checkout') {
+        stage('Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/MZahii/Devops.git'
             }
         }
 
-        // STAGE 1: Unit Tests
-        // We run tests here to generate the surefire-reports and JaCoCo data
-        stage('Unit Tests') {
+        stage('Test') {
             steps {
                 sh 'mvn clean test'
             }
         }
 
-        // STAGE 2: SonarQube Analysis
         stage('SonarQube Analysis') {
             steps {
+                // IMPORTANT: If this fails, check "Manage Jenkins -> System -> SonarQube Servers"
                 withSonarQubeEnv('sonar-server') {
-                    // FIX: Changed port back to 9000 because your working file used 9000.
-                    // Kept the coverage exclusions for entities.
+                    // I have reset this to localhost:9000 matching your "working" file
                     sh '''
                       mvn sonar:sonar \
                       -Dsonar.projectKey=student-management \
@@ -47,7 +43,6 @@ pipeline {
             }
         }
 
-        // STAGE 3: Quality Gate
         stage('Quality Gate') {
             steps {
                 timeout(time: 5, unit: 'MINUTES') {
@@ -56,9 +51,7 @@ pipeline {
             }
         }
 
-        // STAGE 4: Package (Build)
-        // PDF Requirement: Use -Dmaven.test.skip=true
-        stage('Code Build') {
+        stage('Package') {
             steps {
                 sh 'mvn package -Dmaven.test.skip=true'
             }
@@ -80,7 +73,6 @@ pipeline {
         }
     }
 
-    // PDF Requirement: Post Actions
     post {
         always {
             junit '**/target/surefire-reports/*.xml'
