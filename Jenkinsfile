@@ -98,7 +98,21 @@ pipeline {
             }
         }
     }
-
+    // --- NEW: BUILD FRONTEND ---
+        stage('Build Frontend') {
+            steps {
+                script {
+                    // Build frontend image
+                    sh "docker build -t zehim/devops-frontend:latest ./frontend"
+                    
+                    // Push
+                    withCredentials([usernamePassword(credentialsId: "$DOCKER_CREDENTIALS_ID", usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                        sh "docker login -u ${USER} -p ${PASS}"
+                        sh "docker push zehim/devops-frontend:latest"
+                    }
+                }
+            }
+        }
     post {
         always {
             junit '**/target/surefire-reports/*.xml'
