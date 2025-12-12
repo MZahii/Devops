@@ -1,5 +1,6 @@
 # STAGE 1: Build
-FROM node:18-alpine as build
+# CHANGED: Updated from node:18 to node:22 to match Angular requirements
+FROM node:22-alpine AS build
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
