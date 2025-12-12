@@ -12,18 +12,19 @@ pipeline {
     environment {
         APP_ENV = "DEV"
         IMAGE_NAME = 'zehim/devops-project:latest'
+        FRONTEND_IMAGE = 'zehim/devops-frontend:latest'
         DOCKER_CREDENTIALS_ID = 'docker-hub-credentials'
     }
 
     stages {
-        // --- STAGE 1: CHECKOUT (Matches Screenshot) ---
+        // --- STAGE 1: CHECKOUT ---
         stage('Git Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/MZahii/Devops.git'
             }
         }
 
-        // --- PRE-REQUISITES (Must keep these for your grade!) ---
+        // --- PRE-REQUISITES ---
         stage('Unit Tests') {
             steps {
                 sh 'mvn clean test'
@@ -53,20 +54,18 @@ pipeline {
             }
         }
 
-        // --- STAGE 2: BUILD (Matches Screenshot) ---
+        // --- STAGE 2: BUILD BACKEND ---
         stage('Build') {
             steps {
                 sh 'mvn package -Dmaven.test.skip=true'
             }
         }
 
-        // --- STAGE 3: DOCKER BUILD & PUSH (Matches Screenshot - Combined) ---
-        stage('Docker Build & Push') {
+        // --- STAGE 3: DOCKER BACKEND ---
+        stage('Docker Build & Push (Backend)') {
             steps {
-                // Build the image
                 sh "docker build -t ${IMAGE_NAME} ."
                 
-                // Login and Push
                 withCredentials([usernamePassword(credentialsId: "$DOCKER_CREDENTIALS_ID", usernameVariable: 'USER', passwordVariable: 'PASS')]) {
                     sh "docker login -u ${USER} -p ${PASS}"
                     sh "docker push ${IMAGE_NAME}"
@@ -74,45 +73,50 @@ pipeline {
             }
         }
 
-        // --- STAGE 4: KUBERNETES DEPLOY (Matches Screenshot) ---
+        // --- STAGE 4: DOCKER FRONTEND (NEW) ---
+        stage('Docker Build & Push (Frontend)') {
+            steps {
+                script {
+                    // Build frontend from the 'frontend' folder
+                    sh "docker build -t ${FRONTEND_IMAGE} ./frontend"
+                    
+                    // Push
+                    withCredentials([usernamePassword(credentialsId: "$DOCKER_CREDENTIALS_ID", usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                        sh "docker login -u ${USER} -p ${PASS}"
+                        sh "docker push ${FRONTEND_IMAGE}"
+                    }
+                }
+            }
+        }
+
+        // --- STAGE 5: KUBERNETES SETUP ---
         stage('Kubernetes Deploy') {
             steps {
                 script {
-                    // Just the setup part (Namespace)
                     sh 'kubectl create namespace devops || true'
                 }
             }
         }
 
-        // --- STAGE 5: DEPLOY APP & DB (Matches Screenshot) ---
-        stage('Deploy MySQL & Spring Boot on K8s') {
+        // --- STAGE 6: DEPLOY ALL APPS ---
+        stage('Deploy Apps on K8s') {
             steps {
                 script {
-                    // Apply the Files
+                    // Database & Backend
                     sh 'kubectl apply -f k8s-mysql.yaml -n devops'
                     sh 'kubectl apply -f k8s-spring.yaml -n devops'
                     
-                    // Restart to ensure new image is pulled
+                    // Frontend (New)
+                    sh 'kubectl apply -f k8s-frontend.yaml -n devops'
+                    
+                    // Restart to pull new images
                     sh 'kubectl rollout restart deployment/spring-app -n devops'
+                    sh 'kubectl rollout restart deployment/frontend -n devops'
                 }
             }
         }
     }
-    // --- NEW: BUILD FRONTEND ---
-        stage('Build Frontend') {
-            steps {
-                script {
-                    // Build frontend image
-                    sh "docker build -t zehim/devops-frontend:latest ./frontend"
-                    
-                    // Push
-                    withCredentials([usernamePassword(credentialsId: "$DOCKER_CREDENTIALS_ID", usernameVariable: 'USER', passwordVariable: 'PASS')]) {
-                        sh "docker login -u ${USER} -p ${PASS}"
-                        sh "docker push zehim/devops-frontend:latest"
-                    }
-                }
-            }
-        }
+
     post {
         always {
             junit '**/target/surefire-reports/*.xml'
