@@ -14,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/department")
+@CrossOrigin(origins = "*")
 @AllArgsConstructor
 public class DepartmentController {
     
@@ -50,6 +51,9 @@ public class DepartmentController {
     }
 
     @DeleteMapping("/deleteDepartment/{id}")
-    public void deleteDepartment(@PathVariable Long id) {
-      departmentService.deleteDepartment(id); }
+    public ResponseEntity<Void> deleteDepartment(@PathVariable Long id) {
+        logger.info("Deleting department with id: {}", id);
+        departmentService.deleteDepartment(id);
+        return ResponseEntity.noContent().build();
+    }
 }

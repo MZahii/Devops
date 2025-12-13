@@ -14,14 +14,15 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/student")
+@CrossOrigin(origins = "*")
 @AllArgsConstructor
 public class StudentController {
     
     private static final Logger logger = LoggerFactory.getLogger(StudentController.class);
     private final IStudentService studentService;
 
-    @GetMapping("/getAllStudents")
-    public ResponseEntity<List<Student>> getAllStudents() {
+    @GetMapping("/getAllStudent")
+    public ResponseEntity<List<Student>> getAllStudent() {
         logger.info("Fetching all students");
         return ResponseEntity.ok(studentService.getAllStudents());
     }
@@ -36,8 +37,8 @@ public class StudentController {
         return ResponseEntity.ok(student);
     }
 
-    @PostMapping("/createStudent")
-    public ResponseEntity<Student> createStudent(@Valid @RequestBody Student student) {
+    @PostMapping("/addStudent")
+    public ResponseEntity<Student> addStudent(@Valid @RequestBody Student student) {
         logger.info("Creating student: {} {}", student.getFirstName(), student.getLastName());
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(studentService.saveStudent(student));

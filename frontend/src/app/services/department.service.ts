@@ -2,11 +2,10 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, catchError, throwError } from 'rxjs';
 import { Department } from '../models/department.model';
-import { API_CONFIG } from '../config/app.config';
 
 @Injectable({ providedIn: 'root' })
 export class DepartmentService {
-  private readonly apiUrl = API_CONFIG.DEPARTMENT_BASE;
+  private readonly apiUrl = 'http://localhost:9999/student/department';
 
   constructor(private http: HttpClient) {}
 
