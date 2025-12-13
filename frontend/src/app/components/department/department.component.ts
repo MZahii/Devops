@@ -58,12 +58,15 @@ export class DepartmentComponent implements OnInit {
     });
   }
 
-  deleteDepartment(id: number) {
+  deleteDepartment(id: number | undefined) {
+    if (!id) {
+      console.error('Cannot delete: ID is missing');
+      return;
+    }
+
     if(confirm('Are you sure you want to delete this department?')) {
       this.departmentService.deleteDepartment(id).subscribe({
-        next: () => {
-          this.loadDepartments(); // Refresh list
-        },
+        next: () => this.loadDepartments(),
         error: (err) => alert('Delete failed.')
       });
     }

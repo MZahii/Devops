@@ -20,14 +20,12 @@ export class StudentService {
       .pipe(catchError(this.handleError));
   }
 
-  delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/deleteStudent/${id}`)
-      .pipe(catchError(this.handleError));
-  }
-
   private handleError(error: any): Observable<never> {
     console.error('API Error:', error);
     return throwError(() => error);
+  }
+    deleteStudent(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/deleteStudent/${id}`);
   }
 }
 

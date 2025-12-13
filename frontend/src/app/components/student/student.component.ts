@@ -47,7 +47,8 @@ export class StudentComponent implements OnInit {
       error: (err) => {
         console.error(err);
         this.loading = false;
-        alert('Connection Error! Check your Tunnels.');
+        // Only alert if it's not just an empty list
+        if (err.status !== 200) alert('Connection Error! Check your Tunnels.');
       }
     });
   }
@@ -59,7 +60,6 @@ export class StudentComponent implements OnInit {
       },
       error: (err) => {
         console.error(err);
-        alert('Failed to load departments.');
       }
     });
   }
@@ -71,7 +71,7 @@ export class StudentComponent implements OnInit {
     }
 
     // Find the selected department object
-    const selectedDept = this.departments.find(d => d.idDepartment === this.selectedDepartmentId);
+    const selectedDept = this.departments.find(d => d.idDepartment == this.selectedDepartmentId);
     if (!selectedDept) {
       alert('Please select a valid department!');
       return;
@@ -96,12 +96,16 @@ export class StudentComponent implements OnInit {
     });
   }
 
-  deleteStudent(id: number) {
+  // Fixed Delete Function
+  deleteStudent(id: number | undefined) {
+    if (!id) {
+      console.error('Cannot delete: ID is missing');
+      return;
+    }
+
     if(confirm('Are you sure you want to delete this student?')) {
-      this.studentService.delete(id).subscribe({
-        next: () => {
-          this.loadStudents(); // Refresh list
-        },
+      this.studentService.deleteStudent(id).subscribe({
+        next: () => this.loadStudents(),
         error: (err) => alert('Delete failed.')
       });
     }
@@ -111,4 +115,3 @@ export class StudentComponent implements OnInit {
     return `${student.firstName} ${student.lastName}`;
   }
 }
-
