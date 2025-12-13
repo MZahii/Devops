@@ -1,75 +1,88 @@
-<!-- Navbar -->
-<nav class="navbar navbar-dark bg-dark mb-4">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 shadow">
   <div class="container">
-    <a class="navbar-brand" href="#">🎓 ESPRIT DevOps Dashboard</a>
+    <a class="navbar-brand" href="#">🚀 ESPRIT DevOps Manager</a>
+    <span class="navbar-text text-light">Kubernetes Cluster Status: 🟢 Online</span>
   </div>
 </nav>
 
 <div class="container">
-  <!-- Stats Cards -->
-  <div class="row mb-4">
+  <div class="row">
+    
+    <!-- LEFT COLUMN: ADD FORM -->
     <div class="col-md-4">
-      <div class="card text-white bg-primary mb-3">
-        <div class="card-header">System Status</div>
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">➕ Add Department</h5>
+        </div>
         <div class="card-body">
-          <h5 class="card-title">Kubernetes: Active</h5>
-          <p class="card-text">All pods are running smoothly.</p>
+          <form (ngSubmit)="addDepartment()">
+            <div class="mb-3">
+              <label class="form-label">Department Name</label>
+              <input type="text" class="form-control" [(ngModel)]="newDept.name" name="name" placeholder="Ex: IT, HR...">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Location</label>
+              <input type="text" class="form-control" [(ngModel)]="newDept.location" name="location" placeholder="Ex: Block A...">
+            </div>
+            <div class="d-grid">
+              <button type="submit" class="btn btn-success">Save Department</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Quick Stats -->
+      <div class="card shadow-sm text-center">
+        <div class="card-body">
+          <h6>Total Departments</h6>
+          <h2 class="text-primary">{{ departments.length }}</h2>
         </div>
       </div>
     </div>
-    <div class="col-md-4">
-      <div class="card text-white bg-success mb-3">
-        <div class="card-header">Database</div>
-        <div class="card-body">
-          <h5 class="card-title">MySQL: Connected</h5>
-          <p class="card-text">Persistent Storage enabled.</p>
+
+    <!-- RIGHT COLUMN: DATA LIST -->
+    <div class="col-md-8">
+      <div class="card shadow-sm">
+        <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">📂 Department List</h5>
+          <button class="btn btn-sm btn-light" (click)="loadDepartments()">🔄 Refresh</button>
+        </div>
+        <div class="card-body p-0">
+          
+          <div *ngIf="loading" class="text-center p-4">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p>Loading data from Kubernetes...</p>
+          </div>
+
+          <table class="table table-striped table-hover mb-0" *ngIf="!loading">
+            <thead class="table-dark">
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Location</th>
+                <th class="text-end">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let dept of departments">
+                <td>#{{ dept.idDepartment }}</td>
+                <td class="fw-bold">{{ dept.name }}</td>
+                <td><span class="badge bg-info text-dark">{{ dept.location }}</span></td>
+                <td class="text-end">
+                  <button class="btn btn-sm btn-danger" (click)="deleteDepartment(dept.idDepartment)">
+                    🗑 Delete
+                  </button>
+                </td>
+              </tr>
+              <tr *ngIf="departments.length === 0">
+                <td colspan="4" class="text-center p-3 text-muted">No departments found. Add one!</td>
+              </tr>
+            </tbody>
+          </table>
+
         </div>
       </div>
     </div>
-    <div class="col-md-4">
-      <div class="card text-white bg-info mb-3">
-        <div class="card-header">Pipeline</div>
-        <div class="card-body">
-          <h5 class="card-title">Jenkins: CI/CD</h5>
-          <p class="card-text">Build #32 Passed.</p>
-        </div>
-      </div>
-    </div>
-  </div>
 
-  <!-- Main Action Area -->
-  <div class="card shadow-sm">
-    <div class="card-body text-center">
-      <h3 class="card-title text-secondary">Student Management System</h3>
-      <p class="card-text">Click below to fetch live data from the Spring Boot Backend.</p>
-      <button class="btn btn-lg btn-primary" (click)="fetchDepartments()">
-        🔄 Load Departments
-      </button>
-    </div>
-  </div>
-
-  <!-- Data Table -->
-  <div class="mt-4" *ngIf="departments.length > 0">
-    <h4 class="mb-3">📂 Departments List</h4>
-    <table class="table table-striped table-hover border">
-      <thead class="table-dark">
-        <tr>
-          <th>ID</th>
-          <th>Name</th>
-          <th>Location</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let dept of departments">
-          <td>{{ dept.idDepartment }}</td>
-          <td><strong>{{ dept.name }}</strong></td>
-          <td>{{ dept.location }}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="mt-4 alert alert-warning" *ngIf="loading">
-    Loading data from Kubernetes cluster...
   </div>
 </div>

@@ -1,37 +1,76 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { FormsModule } from '@angular/forms'; // REQUIRED for inputs
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, HttpClientModule],
-  // These must match the filenames you renamed in Step 1
+  imports: [CommonModule, HttpClientModule, FormsModule],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
   departments: any[] = [];
   loading = false;
-  // This points to your Windows Tunnel (Port 9999)
-  apiUrl = 'http://localhost:9999/student/department/getAllDepartment';
+  
+  // Model for the new department form
+  newDept = {
+    name: '',
+    location: ''
+  };
+
+  // Backend URL (Tunnel)
+  private baseUrl = 'http://localhost:9999/student/department';
 
   constructor(private http: HttpClient) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.loadDepartments();
+  }
 
-  fetchDepartments() {
+  // --- READ ---
+  loadDepartments() {
     this.loading = true;
-    this.http.get<any[]>(this.apiUrl).subscribe({
+    this.http.get<any[]>(`${this.baseUrl}/getAllDepartment`).subscribe({
       next: (data) => {
         this.departments = data;
         this.loading = false;
       },
       error: (err) => {
-        console.error('Error connecting to backend', err);
+        console.error(err);
         this.loading = false;
-        alert('Could not connect to Backend on Port 9999. Is the tunnel open?');
+        alert('Connection Error! Check your Tunnels.');
       }
     });
+  }
+
+  // --- CREATE ---
+  addDepartment() {
+    if (!this.newDept.name || !this.newDept.location) {
+      alert('Please fill in both fields!');
+      return;
+    }
+
+    this.http.post(`${this.baseUrl}/createDepartment`, this.newDept).subscribe({
+      next: (res) => {
+        alert('Department Added Successfully! 🎉');
+        this.loadDepartments(); // Refresh list
+        this.newDept = { name: '', location: '' }; // Reset form
+      },
+      error: (err) => alert('Failed to create department.')
+    });
+  }
+
+  // --- DELETE ---
+  deleteDepartment(id: number) {
+    if(confirm('Are you sure you want to delete this department?')) {
+      this.http.delete(`${this.baseUrl}/deleteDepartment/${id}`).subscribe({
+        next: () => {
+          this.loadDepartments(); // Refresh list
+        },
+        error: (err) => alert('Delete failed.')
+      });
+    }
   }
 }
