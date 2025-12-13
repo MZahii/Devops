@@ -1,19 +1,15 @@
-# Multi-stage build for smaller image
-FROM eclipse-temurin:17-jdk-alpine AS build
-WORKDIR /app
-COPY pom.xml .
-COPY src ./src
-RUN apk add --no-cache maven && \
-    mvn clean package -DskipTests && \
-    apk del maven
+# Use a standard, lightweight Java 17 image
+FROM eclipse-temurin:17-jdk-alpine
 
-FROM eclipse-temurin:17-jre-alpine
+# Set a working directory
 WORKDIR /app
-RUN addgroup -S spring && adduser -S spring -G spring && \
-    apk add --no-cache curl
-USER spring:spring
-COPY --from=build /app/target/*.jar app.jar
+
+# Copy the generated JAR file from the 'target' folder and rename it
+# The wildcard *.jar makes it work even if you change the version
+COPY target/*.jar app.jar
+
+# Expose the port your application runs on (we saw this in the logs)
 EXPOSE 8089
-HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
-  CMD curl -f http://localhost:8089/student/actuator/health || exit 1
-ENTRYPOINT ["java", "-jar", "/app.jar"]
+
+# The command to run the application
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]
