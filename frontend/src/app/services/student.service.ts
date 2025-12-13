@@ -10,7 +10,7 @@ export class StudentService {
   constructor(private http: HttpClient) {}
 
   getAll(): Observable<Student[]> {
-    return this.http.get<Student[]>(`${this.apiUrl}/getAllStudent`)
+    return this.http.get<Student[]>(`${this.apiUrl}/getAllStudents`)
       .pipe(catchError(this.handleError));
   }
 
@@ -29,4 +29,3 @@ export class StudentService {
     return throwError(() => error);
   }
 }
-

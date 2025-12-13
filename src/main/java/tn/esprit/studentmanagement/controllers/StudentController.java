@@ -21,8 +21,8 @@ public class StudentController {
     private static final Logger logger = LoggerFactory.getLogger(StudentController.class);
     private final IStudentService studentService;
 
-    @GetMapping("/getAllStudent")
-    public ResponseEntity<List<Student>> getAllStudent() {
+    @GetMapping("/getAllStudents")
+    public ResponseEntity<List<Student>> getAllStudents() {
         logger.info("Fetching all students");
         return ResponseEntity.ok(studentService.getAllStudents());
     }

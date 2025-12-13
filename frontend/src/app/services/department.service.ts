@@ -10,12 +10,12 @@ export class DepartmentService {
   constructor(private http: HttpClient) {}
 
   getAllDepartments(): Observable<Department[]> {
-    return this.http.get<Department[]>(`${this.apiUrl}/getAllDepartment`)
+    return this.http.get<Department[]>(`${this.apiUrl}/getAllDepartments`)
       .pipe(catchError(this.handleError));
   }
 
   addDepartment(dept: Department): Observable<Department> {
-    return this.http.post<Department>(`${this.apiUrl}/createDepartment`, dept)
+    return this.http.post<Department>(`${this.apiUrl}/addDepartment`, dept)
       .pipe(catchError(this.handleError));
   }
 
@@ -29,4 +29,3 @@ export class DepartmentService {
     return throwError(() => error);
   }
 }
-

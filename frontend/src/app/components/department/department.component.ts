@@ -23,11 +23,11 @@ export class DepartmentComponent implements OnInit {
 
   constructor(private departmentService: DepartmentService) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.loadDepartments();
   }
 
-  loadDepartments() {
+  loadDepartments(): void {
     this.loading = true;
     this.departmentService.getAllDepartments().subscribe({
       next: (data) => {
@@ -35,14 +35,14 @@ export class DepartmentComponent implements OnInit {
         this.loading = false;
       },
       error: (err) => {
-        console.error(err);
+        console.error('Error loading departments:', err);
         this.loading = false;
-        alert('Connection Error! Check your Tunnels.');
+        alert('Connection Error! Check your backend connection.');
       }
     });
   }
 
-  addDepartment() {
+  addDepartment(): void {
     if (!this.newDept.name || !this.newDept.location) {
       alert('Please fill in both fields!');
       return;
@@ -52,24 +52,35 @@ export class DepartmentComponent implements OnInit {
       next: (res) => {
         alert('Department Added Successfully! 🎉');
         this.loadDepartments(); // Refresh list
-        this.newDept = { name: '', location: '' }; // Reset form
+        this.resetForm();
       },
-      error: (err) => alert('Failed to create department.')
+      error: (err) => {
+        console.error('Error adding department:', err);
+        alert('Failed to create department. Please try again.');
+      }
     });
   }
 
-  deleteDepartment(id: number | undefined) {
+  deleteDepartment(id: number | undefined): void {
     if (!id) {
       console.error('Cannot delete: ID is missing');
       return;
     }
 
-    if(confirm('Are you sure you want to delete this department?')) {
+    if (confirm('Are you sure you want to delete this department?')) {
       this.departmentService.deleteDepartment(id).subscribe({
-        next: () => this.loadDepartments(),
-        error: (err) => alert('Delete failed.')
+        next: () => {
+          this.loadDepartments(); // Refresh list
+        },
+        error: (err) => {
+          console.error('Error deleting department:', err);
+          alert('Delete failed. Please try again.');
+        }
       });
     }
   }
-}
 
+  private resetForm(): void {
+    this.newDept = { name: '', location: '' };
+  }
+}

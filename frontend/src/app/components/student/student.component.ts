@@ -32,12 +32,12 @@ export class StudentComponent implements OnInit {
     private departmentService: DepartmentService
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.loadStudents();
     this.loadDepartments();
   }
 
-  loadStudents() {
+  loadStudents(): void {
     this.loading = true;
     this.studentService.getAll().subscribe({
       next: (data) => {
@@ -45,33 +45,33 @@ export class StudentComponent implements OnInit {
         this.loading = false;
       },
       error: (err) => {
-        console.error(err);
+        console.error('Error loading students:', err);
         this.loading = false;
-        // Only alert if it's not just an empty list
-        if (err.status !== 200) alert('Connection Error! Check your Tunnels.');
+        alert('Connection Error! Check your backend connection.');
       }
     });
   }
 
-  loadDepartments() {
+  loadDepartments(): void {
     this.departmentService.getAllDepartments().subscribe({
       next: (data) => {
         this.departments = data;
       },
       error: (err) => {
-        console.error(err);
+        console.error('Error loading departments:', err);
+        alert('Failed to load departments.');
       }
     });
   }
 
-  addStudent() {
+  addStudent(): void {
     if (!this.newStudent.firstName || !this.newStudent.lastName || !this.newStudent.email || !this.selectedDepartmentId) {
       alert('Please fill in all fields!');
       return;
     }
 
     // Find the selected department object
-    const selectedDept = this.departments.find(d => d.idDepartment == this.selectedDepartmentId);
+    const selectedDept = this.departments.find(d => d.idDepartment === this.selectedDepartmentId);
     if (!selectedDept) {
       alert('Please select a valid department!');
       return;
@@ -84,34 +84,45 @@ export class StudentComponent implements OnInit {
       next: (res) => {
         alert('Student Added Successfully! 🎉');
         this.loadStudents(); // Refresh list
-        this.newStudent = {
-          firstName: '',
-          lastName: '',
-          email: '',
-          department: {} as Department
-        }; // Reset form
-        this.selectedDepartmentId = undefined;
+        this.resetForm();
       },
-      error: (err) => alert('Failed to create student.')
+      error: (err) => {
+        console.error('Error adding student:', err);
+        alert('Failed to create student. Please try again.');
+      }
     });
   }
 
-  // Fixed Delete Function
-  deleteStudent(id: number | undefined) {
+  deleteStudent(id: number | undefined): void {
     if (!id) {
       console.error('Cannot delete: ID is missing');
       return;
     }
 
-    if(confirm('Are you sure you want to delete this student?')) {
+    if (confirm('Are you sure you want to delete this student?')) {
       this.studentService.deleteStudent(id).subscribe({
-        next: () => this.loadStudents(),
-        error: (err) => alert('Delete failed.')
+        next: () => {
+          this.loadStudents(); // Refresh list
+        },
+        error: (err) => {
+          console.error('Error deleting student:', err);
+          alert('Delete failed. Please try again.');
+        }
       });
     }
   }
 
   getStudentName(student: Student): string {
     return `${student.firstName} ${student.lastName}`;
+  }
+
+  private resetForm(): void {
+    this.newStudent = {
+      firstName: '',
+      lastName: '',
+      email: '',
+      department: {} as Department
+    };
+    this.selectedDepartmentId = undefined;
   }
 }

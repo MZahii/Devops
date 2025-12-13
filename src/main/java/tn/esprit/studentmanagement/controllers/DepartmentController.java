@@ -21,8 +21,8 @@ public class DepartmentController {
     private static final Logger logger = LoggerFactory.getLogger(DepartmentController.class);
     private final IDepartmentService departmentService;
 
-    @GetMapping("/getAllDepartment")
-    public ResponseEntity<List<Department>> getAllDepartment() {
+    @GetMapping("/getAllDepartments")
+    public ResponseEntity<List<Department>> getAllDepartments() {
         logger.info("Fetching all departments");
         return ResponseEntity.ok(departmentService.getAllDepartments());
     }
@@ -37,8 +37,8 @@ public class DepartmentController {
         return ResponseEntity.ok(department);
     }
 
-    @PostMapping("/createDepartment")
-    public ResponseEntity<Department> createDepartment(@Valid @RequestBody Department department) {
+    @PostMapping("/addDepartment")
+    public ResponseEntity<Department> addDepartment(@Valid @RequestBody Department department) {
         logger.info("Creating department: {}", department.getName());
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(departmentService.saveDepartment(department));
