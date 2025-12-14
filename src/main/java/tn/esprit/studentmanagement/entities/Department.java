@@ -1,5 +1,6 @@
 package tn.esprit.studentmanagement.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -29,5 +30,6 @@ public class Department {
     private String head; // chef de département
 
     @OneToMany(mappedBy = "department")
+    @JsonIgnore
     private List<Student> students;
 }
