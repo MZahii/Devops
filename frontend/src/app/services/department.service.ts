@@ -5,7 +5,7 @@ import { Department } from '../models/department.model';
 
 @Injectable({ providedIn: 'root' })
 export class DepartmentService {
-  private readonly apiUrl = 'http://localhost:9999/student/department';
+  private readonly apiUrl = 'http://192.168.56.20:9999/student/department';
 
   constructor(private http: HttpClient) {}
 
