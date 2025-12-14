@@ -11,17 +11,17 @@ export class DepartmentService {
   constructor(private http: HttpClient) {}
 
   getAll(): Observable<Department[]> {
-    return this.http.get<Department[]>(`${this.apiUrl}/getAll`)
+    return this.http.get<Department[]>(this.apiUrl)
       .pipe(catchError(this.handleError));
   }
 
   add(dept: Department): Observable<Department> {
-    return this.http.post<Department>(`${this.apiUrl}/add`, dept)
+    return this.http.post<Department>(this.apiUrl, dept)
       .pipe(catchError(this.handleError));
   }
 
   delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/delete/${id}`)
+    return this.http.delete<void>(`${this.apiUrl}/${id}`)
       .pipe(catchError(this.handleError));
   }
 

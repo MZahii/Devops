@@ -21,7 +21,7 @@ public class DepartmentController {
     private static final Logger logger = LoggerFactory.getLogger(DepartmentController.class);
     private final IDepartmentService departmentService;
 
-    @GetMapping("/getAll")
+    @GetMapping
     public ResponseEntity<List<Department>> getAll() {
         logger.info("Fetching all departments");
         return ResponseEntity.ok(departmentService.getAllDepartments());
@@ -37,20 +37,21 @@ public class DepartmentController {
         return ResponseEntity.ok(department);
     }
 
-    @PostMapping("/add")
+    @PostMapping
     public ResponseEntity<Department> add(@Valid @RequestBody Department department) {
         logger.info("Creating department: {}", department.getName());
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(departmentService.saveDepartment(department));
     }
 
-    @PutMapping("/update")
-    public ResponseEntity<Department> update(@Valid @RequestBody Department department) {
-        logger.info("Updating department with id: {}", department.getIdDepartment());
+    @PutMapping("/{id}")
+    public ResponseEntity<Department> update(@PathVariable Long id, @Valid @RequestBody Department department) {
+        logger.info("Updating department with id: {}", id);
+        department.setIdDepartment(id);
         return ResponseEntity.ok(departmentService.saveDepartment(department));
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         logger.info("Deleting department with id: {}", id);
         departmentService.deleteDepartment(id);
