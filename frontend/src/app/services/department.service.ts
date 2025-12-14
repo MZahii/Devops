@@ -6,7 +6,7 @@ import { Department } from '../models/department.model';
 @Injectable({ providedIn: 'root' })
 export class DepartmentService {
   // Using Kubernetes NodePort 30080 for backend access
-  private readonly apiUrl = 'http://192.168.56.20:30080/student/department';
+  private readonly apiUrl = 'http://192.168.56.20:9999/student/department';
 
   constructor(private http: HttpClient) {}
 
