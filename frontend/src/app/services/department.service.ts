@@ -9,18 +9,18 @@ export class DepartmentService {
 
   constructor(private http: HttpClient) {}
 
-  getAllDepartments(): Observable<Department[]> {
-    return this.http.get<Department[]>(`${this.apiUrl}/getAllDepartments`)
+  getAll(): Observable<Department[]> {
+    return this.http.get<Department[]>(`${this.apiUrl}/getAll`)
       .pipe(catchError(this.handleError));
   }
 
-  addDepartment(dept: Department): Observable<Department> {
-    return this.http.post<Department>(`${this.apiUrl}/addDepartment`, dept)
+  add(dept: Department): Observable<Department> {
+    return this.http.post<Department>(`${this.apiUrl}/add`, dept)
       .pipe(catchError(this.handleError));
   }
 
-  deleteDepartment(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/deleteDepartment/${id}`)
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/delete/${id}`)
       .pipe(catchError(this.handleError));
   }
 

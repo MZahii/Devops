@@ -53,7 +53,7 @@ export class StudentComponent implements OnInit {
   }
 
   loadDepartments(): void {
-    this.departmentService.getAllDepartments().subscribe({
+    this.departmentService.getAll().subscribe({
       next: (data) => {
         this.departments = data;
       },
@@ -93,14 +93,14 @@ export class StudentComponent implements OnInit {
     });
   }
 
-  deleteStudent(id: number | undefined): void {
+  delete(id: number | undefined): void {
     if (!id) {
       console.error('Cannot delete: ID is missing');
       return;
     }
 
     if (confirm('Are you sure you want to delete this student?')) {
-      this.studentService.deleteStudent(id).subscribe({
+      this.studentService.delete(id).subscribe({
         next: () => {
           this.loadStudents(); // Refresh list
         },

@@ -29,7 +29,7 @@ export class DepartmentComponent implements OnInit {
 
   loadDepartments(): void {
     this.loading = true;
-    this.departmentService.getAllDepartments().subscribe({
+    this.departmentService.getAll().subscribe({
       next: (data) => {
         this.departments = data;
         this.loading = false;
@@ -48,7 +48,7 @@ export class DepartmentComponent implements OnInit {
       return;
     }
 
-    this.departmentService.addDepartment(this.newDept).subscribe({
+    this.departmentService.add(this.newDept).subscribe({
       next: (res) => {
         alert('Department Added Successfully! 🎉');
         this.loadDepartments(); // Refresh list
@@ -61,14 +61,14 @@ export class DepartmentComponent implements OnInit {
     });
   }
 
-  deleteDepartment(id: number | undefined): void {
+  delete(id: number | undefined): void {
     if (!id) {
       console.error('Cannot delete: ID is missing');
       return;
     }
 
     if (confirm('Are you sure you want to delete this department?')) {
-      this.departmentService.deleteDepartment(id).subscribe({
+      this.departmentService.delete(id).subscribe({
         next: () => {
           this.loadDepartments(); // Refresh list
         },

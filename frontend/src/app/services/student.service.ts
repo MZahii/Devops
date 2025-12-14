@@ -10,17 +10,17 @@ export class StudentService {
   constructor(private http: HttpClient) {}
 
   getAll(): Observable<Student[]> {
-    return this.http.get<Student[]>(`${this.apiUrl}/getAllStudents`)
+    return this.http.get<Student[]>(`${this.apiUrl}/getAll`)
       .pipe(catchError(this.handleError));
   }
 
   add(student: Student): Observable<Student> {
-    return this.http.post<Student>(`${this.apiUrl}/addStudent`, student)
+    return this.http.post<Student>(`${this.apiUrl}/add`, student)
       .pipe(catchError(this.handleError));
   }
 
-  deleteStudent(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/deleteStudent/${id}`)
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/delete/${id}`)
       .pipe(catchError(this.handleError));
   }
 
