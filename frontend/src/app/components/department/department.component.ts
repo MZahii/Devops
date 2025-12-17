@@ -14,14 +14,14 @@ import { Department } from '../../models/department.model';
 export class DepartmentComponent implements OnInit {
   departments: Department[] = [];
   loading = false;
-  
+
   // Model for the new department form
   newDept: Department = {
     name: '',
     location: ''
   };
 
-  constructor(private departmentService: DepartmentService) {}
+  constructor(private departmentService: DepartmentService) { }
 
   ngOnInit(): void {
     this.loadDepartments();
@@ -78,6 +78,11 @@ export class DepartmentComponent implements OnInit {
         }
       });
     }
+  }
+
+  // Check if the form is valid for enabling/disabling the save button
+  get isFormValid(): boolean {
+    return !!(this.newDept.name && this.newDept.location);
   }
 
   private resetForm(): void {

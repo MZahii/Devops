@@ -18,7 +18,7 @@ export class StudentComponent implements OnInit {
   departments: Department[] = [];
   loading = false;
   selectedDepartmentId?: number;
-  
+
   // Model for the new student form
   newStudent: Student = {
     firstName: '',
@@ -30,7 +30,7 @@ export class StudentComponent implements OnInit {
   constructor(
     private studentService: StudentService,
     private departmentService: DepartmentService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadStudents();
@@ -70,8 +70,8 @@ export class StudentComponent implements OnInit {
       return;
     }
 
-    // Find the selected department object
-    const selectedDept = this.departments.find(d => d.idDepartment === this.selectedDepartmentId);
+    // Find the selected department object (using == for type coercion string/number)
+    const selectedDept = this.departments.find(d => d.idDepartment == this.selectedDepartmentId);
     if (!selectedDept) {
       alert('Please select a valid department!');
       return;
@@ -114,6 +114,16 @@ export class StudentComponent implements OnInit {
 
   getStudentName(student: Student): string {
     return `${student.firstName} ${student.lastName}`;
+  }
+
+  // Check if the form is valid for enabling/disabling the save button
+  get isFormValid(): boolean {
+    return !!(
+      this.newStudent.firstName &&
+      this.newStudent.lastName &&
+      this.newStudent.email &&
+      this.selectedDepartmentId
+    );
   }
 
   private resetForm(): void {

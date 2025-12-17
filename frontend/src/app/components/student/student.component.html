@@ -1,47 +1,74 @@
-<div class="container">
+<div class="container fade-in">
   <div class="row">
     
     <!-- LEFT COLUMN: ADD FORM -->
     <div class="col-md-4">
       <div class="card shadow-sm mb-4">
         <div class="card-header bg-success text-white">
-          <h5 class="mb-0">➕ Add Student</h5>
+          <h5 class="mb-0">✨ Add New Student</h5>
         </div>
         <div class="card-body">
           <form (ngSubmit)="addStudent()">
             <div class="mb-3">
               <label class="form-label">First Name</label>
-              <input type="text" class="form-control" [(ngModel)]="newStudent.firstName" name="firstName" placeholder="Ex: John">
+              <input 
+                type="text" 
+                class="form-control" 
+                [(ngModel)]="newStudent.firstName" 
+                name="firstName" 
+                placeholder="e.g., John"
+                required>
             </div>
             <div class="mb-3">
               <label class="form-label">Last Name</label>
-              <input type="text" class="form-control" [(ngModel)]="newStudent.lastName" name="lastName" placeholder="Ex: Doe">
+              <input 
+                type="text" 
+                class="form-control" 
+                [(ngModel)]="newStudent.lastName" 
+                name="lastName" 
+                placeholder="e.g., Doe"
+                required>
             </div>
             <div class="mb-3">
-              <label class="form-label">Email</label>
-              <input type="email" class="form-control" [(ngModel)]="newStudent.email" name="email" placeholder="Ex: john.doe@example.com">
+              <label class="form-label">Email Address</label>
+              <input 
+                type="email" 
+                class="form-control" 
+                [(ngModel)]="newStudent.email" 
+                name="email" 
+                placeholder="john.doe@esprit.tn"
+                required>
             </div>
             <div class="mb-3">
               <label class="form-label">Department</label>
-              <select class="form-select" [(ngModel)]="selectedDepartmentId" name="department">
-                <option [value]="undefined">Select a Department</option>
+              <select 
+                class="form-select" 
+                [(ngModel)]="selectedDepartmentId" 
+                name="department"
+                required>
+                <option [value]="undefined" selected disabled>Select a Department</option>
                 <option *ngFor="let dept of departments" [value]="dept.idDepartment">
                   {{ dept.name }} - {{ dept.location }}
                 </option>
               </select>
             </div>
             <div class="d-grid">
-              <button type="submit" class="btn btn-success">Save Student</button>
+              <button 
+                type="submit" 
+                class="btn btn-success"
+                [disabled]="!isFormValid">
+                💾 Save Student
+              </button>
             </div>
           </form>
         </div>
       </div>
 
-      <!-- Quick Stats -->
+      <!-- Quick Stats Card -->
       <div class="card shadow-sm text-center">
         <div class="card-body">
-          <h6>Total Students</h6>
-          <h2 class="text-success">{{ students.length }}</h2>
+          <h6 class="text-uppercase text-muted mb-2">Total Students</h6>
+          <h1 class="text-success mb-0" style="font-size: 3rem; font-weight: 800;">{{ students.length }}</h1>
         </div>
       </div>
     </div>
@@ -50,40 +77,52 @@
     <div class="col-md-8">
       <div class="card shadow-sm">
         <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
-          <h5 class="mb-0">👥 Student List</h5>
-          <button class="btn btn-sm btn-light" (click)="loadStudents()">🔄 Refresh</button>
+          <h5 class="mb-0">👥 Student Directory</h5>
+          <button class="btn btn-sm btn-light" (click)="loadStudents()">
+            🔄 Refresh
+          </button>
         </div>
         <div class="card-body p-0">
           
-          <div *ngIf="loading" class="text-center p-4">
-            <div class="spinner-border text-success" role="status"></div>
-            <p>Loading data...</p>
+          <!-- Loading State -->
+          <div *ngIf="loading" class="text-center p-5">
+            <div class="spinner-border text-success mb-3" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="text-muted">Loading student data...</p>
           </div>
 
+          <!-- Data Table -->
           <table class="table table-striped table-hover mb-0" *ngIf="!loading">
             <thead class="table-dark">
               <tr>
                 <th>ID</th>
-                <th>Name</th>
+                <th>Full Name</th>
                 <th>Email</th>
                 <th>Department</th>
                 <th class="text-end">Actions</th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let student of students">
-                <td>#{{ student.idStudent }}</td>
+              <tr *ngFor="let student of students" class="fade-in">
+                <td><span class="badge bg-secondary">#{{ student.idStudent }}</span></td>
                 <td class="fw-bold">{{ getStudentName(student) }}</td>
                 <td>{{ student.email }}</td>
                 <td><span class="badge bg-info text-dark">{{ student.department?.name }}</span></td>
                 <td class="text-end">
-                  <button class="btn btn-sm btn-danger" (click)="delete(student.idStudent)">
-                    🗑 Delete
+                  <button 
+                    class="btn btn-sm btn-danger" 
+                    (click)="delete(student.idStudent)"
+                    title="Delete student">
+                    🗑️ Delete
                   </button>
                 </td>
               </tr>
               <tr *ngIf="students.length === 0">
-                <td colspan="5" class="text-center p-3 text-muted">No students found. Add one!</td>
+                <td colspan="5" class="text-center p-4 text-muted">
+                  <h5>No students found</h5>
+                  <p>Add your first student using the form!</p>
+                </td>
               </tr>
             </tbody>
           </table>

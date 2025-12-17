@@ -1,34 +1,38 @@
-<div class="container">
+<div class="container fade-in">
   <div class="row">
-    
+
     <!-- LEFT COLUMN: ADD FORM -->
     <div class="col-md-4">
       <div class="card shadow-sm mb-4">
         <div class="card-header bg-primary text-white">
-          <h5 class="mb-0">➕ Add Department</h5>
+          <h5 class="mb-0">🎓 Add New Department</h5>
         </div>
         <div class="card-body">
           <form (ngSubmit)="addDepartment()">
             <div class="mb-3">
               <label class="form-label">Department Name</label>
-              <input type="text" class="form-control" [(ngModel)]="newDept.name" name="name" placeholder="Ex: IT, HR...">
+              <input type="text" class="form-control" [(ngModel)]="newDept.name" name="name"
+                placeholder="e.g., Computer Science" required>
             </div>
             <div class="mb-3">
               <label class="form-label">Location</label>
-              <input type="text" class="form-control" [(ngModel)]="newDept.location" name="location" placeholder="Ex: Block A...">
+              <input type="text" class="form-control" [(ngModel)]="newDept.location" name="location"
+                placeholder="e.g., Building A, Floor 3" required>
             </div>
             <div class="d-grid">
-              <button type="submit" class="btn btn-success">Save Department</button>
+              <button type="submit" class="btn btn-success" [disabled]="!isFormValid">
+                💾 Save Department
+              </button>
             </div>
           </form>
         </div>
       </div>
 
-      <!-- Quick Stats -->
+      <!-- Quick Stats Card -->
       <div class="card shadow-sm text-center">
         <div class="card-body">
-          <h6>Total Departments</h6>
-          <h2 class="text-primary">{{ departments.length }}</h2>
+          <h6 class="text-uppercase text-muted mb-2">Total Departments</h6>
+          <h1 class="text-primary mb-0" style="font-size: 3rem; font-weight: 800;">{{ departments.length }}</h1>
         </div>
       </div>
     </div>
@@ -37,38 +41,47 @@
     <div class="col-md-8">
       <div class="card shadow-sm">
         <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
-          <h5 class="mb-0">📂 Department List</h5>
-          <button class="btn btn-sm btn-light" (click)="loadDepartments()">🔄 Refresh</button>
+          <h5 class="mb-0">📂 Department Directory</h5>
+          <button class="btn btn-sm btn-light" (click)="loadDepartments()">
+            🔄 Refresh
+          </button>
         </div>
         <div class="card-body p-0">
-          
-          <div *ngIf="loading" class="text-center p-4">
-            <div class="spinner-border text-primary" role="status"></div>
-            <p>Loading data...</p>
+
+          <!-- Loading State -->
+          <div *ngIf="loading" class="text-center p-5">
+            <div class="spinner-border text-primary mb-3" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="text-muted">Loading department data...</p>
           </div>
 
+          <!-- Data Table -->
           <table class="table table-striped table-hover mb-0" *ngIf="!loading">
             <thead class="table-dark">
               <tr>
                 <th>ID</th>
-                <th>Name</th>
+                <th>Department Name</th>
                 <th>Location</th>
                 <th class="text-end">Actions</th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let dept of departments">
-                <td>#{{ dept.idDepartment }}</td>
+              <tr *ngFor="let dept of departments" class="fade-in">
+                <td><span class="badge bg-secondary">#{{ dept.idDepartment }}</span></td>
                 <td class="fw-bold">{{ dept.name }}</td>
                 <td><span class="badge bg-info text-dark">{{ dept.location }}</span></td>
                 <td class="text-end">
-                  <button class="btn btn-sm btn-danger" (click)="delete(dept.idDepartment)">
-                    🗑 Delete
+                  <button class="btn btn-sm btn-danger" (click)="delete(dept.idDepartment)" title="Delete department">
+                    🗑️ Delete
                   </button>
                 </td>
               </tr>
               <tr *ngIf="departments.length === 0">
-                <td colspan="4" class="text-center p-3 text-muted">No departments found. Add one!</td>
+                <td colspan="4" class="text-center p-4 text-muted">
+                  <h5>No departments found</h5>
+                  <p>Add your first department using the form!</p>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -79,4 +92,3 @@
 
   </div>
 </div>
-
