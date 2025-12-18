@@ -5,7 +5,7 @@ import { Department } from '../models/department.model';
 
 @Injectable({ providedIn: 'root' })
 export class DepartmentService {
-  private readonly apiUrl = 'http://' + window.location.hostname + ':30089/department';
+  private readonly apiUrl = 'http://' + window.location.hostname + ':9999/student/department';
   private readonly REQUEST_TIMEOUT = 10000; // 10 seconds
 
   constructor(private http: HttpClient) { }
