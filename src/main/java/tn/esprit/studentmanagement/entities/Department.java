@@ -9,6 +9,9 @@ import lombok.*;
 import java.util.List;
 
 @Entity
+@Table(indexes = {
+        @Index(name = "idx_department_name", columnList = "name")
+})
 @Getter
 @Setter
 @AllArgsConstructor
@@ -18,11 +21,11 @@ public class Department {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idDepartment;
-    
+
     @NotBlank(message = "Department name is required")
     @Size(min = 2, max = 100, message = "Department name must be between 2 and 100 characters")
     private String name;
-    
+
     @NotBlank(message = "Location is required")
     @Size(min = 2, max = 100, message = "Location must be between 2 and 100 characters")
     private String location;

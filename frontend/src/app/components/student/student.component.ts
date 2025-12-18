@@ -126,6 +126,15 @@ export class StudentComponent implements OnInit {
     );
   }
 
+  // TrackBy functions for better ngFor performance
+  trackByStudentId(index: number, student: Student): number | undefined {
+    return student.idStudent;
+  }
+
+  trackByDepartmentId(index: number, dept: Department): number | undefined {
+    return dept.idDepartment;
+  }
+
   private resetForm(): void {
     this.newStudent = {
       firstName: '',

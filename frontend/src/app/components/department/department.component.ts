@@ -85,6 +85,11 @@ export class DepartmentComponent implements OnInit {
     return !!(this.newDept.name && this.newDept.location);
   }
 
+  // TrackBy function for better ngFor performance
+  trackByDepartmentId(index: number, dept: Department): number | undefined {
+    return dept.idDepartment;
+  }
+
   private resetForm(): void {
     this.newDept = { name: '', location: '' };
   }
