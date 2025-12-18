@@ -14,6 +14,7 @@ pipeline {
         IMAGE_NAME = 'zehim/devops-project:latest'
         FRONTEND_IMAGE = 'zehim/devops-frontend:latest'
         DOCKER_CREDENTIALS_ID = 'docker-hub-credentials'
+        DOCKER_BUILDKIT = '0'
     }
 
     stages {
@@ -62,7 +63,8 @@ pipeline {
 
         stage('Docker Build & Push (Backend)') {
             steps {
-                sh "docker build -t ${IMAGE_NAME} ."
+                sh 'docker builder prune -af || true'
+                sh "docker build --pull -t ${IMAGE_NAME} ."
                 withCredentials([usernamePassword(credentialsId: "$DOCKER_CREDENTIALS_ID", usernameVariable: 'USER', passwordVariable: 'PASS')]) {
                     sh "docker login -u ${USER} -p ${PASS}"
                     sh "docker push ${IMAGE_NAME}"
@@ -73,7 +75,8 @@ pipeline {
         stage('Docker Build & Push (Frontend)') {
             steps {
                 script {
-                    sh "docker build -t ${FRONTEND_IMAGE} ./frontend"
+                    sh 'docker builder prune -af || true'
+                    sh "docker build --pull -t ${FRONTEND_IMAGE} ./frontend"
                     withCredentials([usernamePassword(credentialsId: "$DOCKER_CREDENTIALS_ID", usernameVariable: 'USER', passwordVariable: 'PASS')]) {
                         sh "docker login -u ${USER} -p ${PASS}"
                         sh "docker push ${FRONTEND_IMAGE}"
