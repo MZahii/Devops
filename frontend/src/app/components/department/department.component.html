@@ -90,23 +90,22 @@
               </thead>
               <tbody>
                 <tr *ngFor="let dept of departments; trackBy: trackByDepartmentId" class="fade-in">
-                  <td>
+                  <td data-label="ID">
                     <span class="badge bg-secondary">
                       <i class="bi bi-tag-fill me-1"></i>
-                      {{ dept.idDepartment }}
+                      #{{ dept.idDepartment }}
                     </span>
                   </td>
-                  <td class="fw-bold">
-                    <i class="bi bi-briefcase-fill text-primary me-2"></i>
-                    {{ dept.name }}
+                  <td data-label="Department Name">
+                    <strong>{{ dept.name }}</strong>
                   </td>
-                  <td>
-                    <span class="badge bg-info">
-                      <i class="bi bi-pin-map-fill me-1"></i>
+                  <td data-label="Location">
+                    <span class="text-muted">
+                      <i class="bi bi-geo-alt-fill me-1"></i>
                       {{ dept.location }}
                     </span>
                   </td>
-                  <td class="text-end">
+                  <td data-label="Actions" class="text-end">
                     <button class="btn btn-sm btn-danger" (click)="delete(dept.idDepartment)" title="Delete department">
                       <i class="bi bi-trash-fill"></i>
                       Delete

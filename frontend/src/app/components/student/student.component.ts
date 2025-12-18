@@ -70,9 +70,15 @@ export class StudentComponent implements OnInit {
       return;
     }
 
-    // Find the selected department object (using == for type coercion string/number)
-    const selectedDept = this.departments.find(d => d.idDepartment == this.selectedDepartmentId);
+    // Convert selectedDepartmentId to number to ensure type consistency
+    const deptId = Number(this.selectedDepartmentId);
+
+    // Find the selected department object
+    const selectedDept = this.departments.find(d => d.idDepartment === deptId);
+
     if (!selectedDept) {
+      console.error('Department not found. Selected ID:', this.selectedDepartmentId, 'Type:', typeof this.selectedDepartmentId);
+      console.error('Available departments:', this.departments.map(d => ({ id: d.idDepartment, type: typeof d.idDepartment })));
       alert('Please select a valid department!');
       return;
     }

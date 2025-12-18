@@ -114,27 +114,31 @@
               </thead>
               <tbody>
                 <tr *ngFor="let student of students; trackBy: trackByStudentId" class="fade-in">
-                  <td>
+                  <td data-label="ID">
                     <span class="badge bg-secondary">
                       <i class="bi bi-tag-fill me-1"></i>
-                      {{ student.idStudent }}
+                      #{{ student.idStudent }}
                     </span>
                   </td>
-                  <td class="fw-bold">
-                    <i class="bi bi-person-circle text-success me-2"></i>
-                    {{ getStudentName(student) }}
+                  <td data-label="Name">
+                    <div class="d-flex align-items-center">
+                      <i class="bi bi-person-circle text-primary me-2 fs-5"></i>
+                      <strong>{{ student.firstName }} {{ student.lastName }}</strong>
+                    </div>
                   </td>
-                  <td>
-                    <i class="bi bi-envelope-at me-1 text-muted"></i>
-                    {{ student.email }}
+                  <td data-label="Email">
+                    <span class="text-muted">
+                      <i class="bi bi-envelope-fill me-1"></i>
+                      {{ student.email }}
+                    </span>
                   </td>
-                  <td>
+                  <td data-label="Department">
                     <span class="badge bg-info">
-                      <i class="bi bi-briefcase-fill me-1"></i>
-                      {{ student.department?.name }}
+                      <i class="bi bi-building me-1"></i>
+                      {{ student.department.name }}
                     </span>
                   </td>
-                  <td class="text-end">
+                  <td data-label="Actions" class="text-end">
                     <button class="btn btn-sm btn-danger" (click)="delete(student.idStudent)" title="Delete student">
                       <i class="bi bi-trash-fill"></i>
                       Delete
