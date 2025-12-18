@@ -115,6 +115,16 @@ pipeline {
         stage('Deploy Apps on K8s') {
             steps {
                 script {
+                    sh '''
+                      set -e
+                      if kubectl get pv grafana-pv > /dev/null 2>&1; then
+                        CURRENT=$(kubectl get pv grafana-pv -o jsonpath='{.spec.hostPath.type}' 2>/dev/null || echo '')
+                        if [ -z "$CURRENT" ] || [ "$CURRENT" != "DirectoryOrCreate" ]; then
+                          kubectl delete pv grafana-pv || true
+                        fi
+                      fi
+                      minikube ssh -- 'sudo mkdir -p /data/grafana && sudo chown -R 472:472 /data/grafana'
+                    '''
                     // Database & Backend
                     sh 'kubectl apply -f k8s-mysql.yaml -n devops'
                     sh 'kubectl apply -f k8s-spring.yaml -n devops'
