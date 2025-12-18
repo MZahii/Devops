@@ -18,7 +18,6 @@ pipeline {
     }
 
     stages {
-        // ... (all previous stages like Git Checkout, Build, Docker Push, etc. remain the same) ...
 
         stage('Git Checkout') {
             steps {
