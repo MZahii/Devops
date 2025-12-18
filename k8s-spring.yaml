@@ -74,11 +74,10 @@ metadata:
   name: spring-service
   namespace: devops
 spec:
-  type: NodePort
+  type: LoadBalancer
   selector:
     app: spring-app
   ports:
     - port: 8080
       targetPort: 8089
-      nodePort: 30080
       protocol: TCP

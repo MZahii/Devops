@@ -6,7 +6,7 @@ import { Student } from '../models/student.model';
 @Injectable({ providedIn: 'root' })
 export class StudentService {
   // Using Kubernetes NodePort 30080 for backend access
-  private readonly apiUrl = 'http://192.168.56.20:9999/student/student';
+  private readonly apiUrl = 'http://192.168.56.20:8080/student/student';
   private readonly REQUEST_TIMEOUT = 10000; // 10 seconds
 
   constructor(private http: HttpClient) { }

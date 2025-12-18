@@ -44,10 +44,9 @@ metadata:
   name: frontend-service
   namespace: devops
 spec:
-  type: NodePort
+  type: LoadBalancer
   selector:
     app: frontend
   ports:
     - port: 80
       targetPort: 80
-      nodePort: 30088
