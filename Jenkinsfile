@@ -82,6 +82,24 @@ pipeline {
             }
         }
 
+        stage('Ensure Kubernetes Cluster') {
+            steps {
+                script {
+                    sh '''
+                      set -e
+                      if ! kubectl cluster-info > /dev/null 2>&1; then
+                        echo "Kubernetes API unreachable, starting Minikube..."
+                        minikube start --driver=docker --memory=4096 --cpus=2 --force
+                      else
+                        echo "Kubernetes cluster already running."
+                      fi
+
+                      kubectl wait --for=condition=Ready nodes --all --timeout=300s
+                    '''
+                }
+            }
+        }
+
         stage('Kubernetes Deploy') {
             steps {
                 script {
