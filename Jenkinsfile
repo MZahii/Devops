@@ -39,21 +39,19 @@ pipeline {
             }
         }
         
-        stage('Deploy to Kubernetes') {
+stage('Deploy to Kubernetes') {
     steps {
-        withCredentials([file(credentialsId: 'kube-config', variable: 'KUBECONFIG')]) {
-            sh '''
-            export KUBECONFIG=$KUBECONFIG
-            kubectl apply -f k8s-mysql.yaml
-            kubectl apply -f k8s-spring.yaml
-            kubectl apply -f k8s-frontend.yaml
-            kubectl apply -f k8s-monitoring.yaml
+        sh '''
+        kubectl apply -f k8s-mysql.yaml
+        kubectl apply -f k8s-spring.yaml
+        kubectl apply -f k8s-frontend.yaml
+        kubectl apply -f k8s-monitoring.yaml
 
-            kubectl rollout restart deployment/spring-app -n devops
-            kubectl rollout restart deployment/frontend -n devops
-            '''
-        }
+        kubectl rollout restart deployment/spring-app -n devops
+        kubectl rollout restart deployment/frontend -n devops
+        '''
     }
 }
+
     }
 }
