@@ -43,7 +43,6 @@
               </label>
               <select class="form-select" [(ngModel)]="selectedDepartmentId" name="department" required>
                 <option [value]="undefined" selected disabled>
-                  <i class="bi bi-arrow-down-circle"></i>
                   Select a Department
                 </option>
                 <option *ngFor="let dept of departments; trackBy: trackByDepartmentId" [value]="dept.idDepartment">

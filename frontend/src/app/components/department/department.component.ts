@@ -48,14 +48,17 @@ export class DepartmentComponent implements OnInit {
       return;
     }
 
+    this.loading = true;
     this.departmentService.add(this.newDept).subscribe({
       next: (res) => {
         alert('Department Added Successfully! 🎉');
+        this.loading = false;
         this.loadDepartments(); // Refresh list
         this.resetForm();
       },
       error: (err) => {
         console.error('Error adding department:', err);
+        this.loading = false;
         alert('Failed to create department. Please try again.');
       }
     });
@@ -68,12 +71,15 @@ export class DepartmentComponent implements OnInit {
     }
 
     if (confirm('Are you sure you want to delete this department?')) {
+      this.loading = true;
       this.departmentService.delete(id).subscribe({
         next: () => {
+          this.loading = false;
           this.loadDepartments(); // Refresh list
         },
         error: (err) => {
           console.error('Error deleting department:', err);
+          this.loading = false;
           alert('Delete failed. Please try again.');
         }
       });

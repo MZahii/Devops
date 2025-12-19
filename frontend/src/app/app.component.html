@@ -1,45 +1,43 @@
-<nav class="navbar navbar-expand-lg navbar-dark mb-4 shadow" style="background: linear-gradient(135deg, #1a1d2e 0%, #242838 100%) !important; backdrop-filter: blur(10px);">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">
-      <strong>🚀 ESPRIT DevOps Manager</strong>
+<nav class="navbar navbar-expand-lg mb-4">
+  <div class="container">
+    <a class="navbar-brand" routerLink="/">
+      🚀 ESPRIT DevOps
     </a>
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
       aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ms-auto">
+      <ul class="navbar-nav mx-auto">
         <li class="nav-item">
-          <a class="nav-link" routerLink="/departments" routerLinkActive="active"
-            [routerLinkActiveOptions]="{exact: false}">
-            📂 Departments
+          <a class="nav-link" routerLink="/departments" routerLinkActive="active">
+            <i class="bi bi-building me-1"></i> Departments
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="/students" routerLinkActive="active"
-            [routerLinkActiveOptions]="{exact: false}">
-            👥 Students
+          <a class="nav-link" routerLink="/students" routerLinkActive="active">
+            <i class="bi bi-people me-1"></i> Students
           </a>
         </li>
       </ul>
 
-      <!-- Theme Toggle Button -->
-      <div class="theme-toggle ms-3" (click)="toggleTheme()" role="button" aria-label="Toggle theme" tabindex="0">
-        <div class="theme-toggle-slider">
-          {{ isDarkMode ? '🌙' : '☀️' }}
+      <div class="d-flex align-items-center gap-3">
+        <!-- Theme Toggle -->
+        <div class="theme-toggle" (click)="toggleTheme()" title="Toggle Dark/Light Mode">
+          <i class="bi" [class.bi-moon-fill]="!isDarkMode" [class.bi-sun-fill]="isDarkMode"></i>
         </div>
-      </div>
 
-      <span class="navbar-text ms-3">
-        <span class="status-badge">
+        <div class="status-badge d-none d-lg-flex">
           <span class="status-dot"></span>
           Cluster: Online
-        </span>
-      </span>
+        </div>
+      </div>
     </div>
   </div>
 </nav>
 
-<div class="container-fluid">
+<main class="container py-4">
   <router-outlet></router-outlet>
-</div>
+</main>

@@ -53,12 +53,15 @@ export class StudentComponent implements OnInit {
   }
 
   loadDepartments(): void {
+    this.loading = true; // Added loading state
     this.departmentService.getAll().subscribe({
       next: (data) => {
         this.departments = data;
+        this.loading = false;
       },
       error: (err) => {
         console.error('Error loading departments:', err);
+        this.loading = false; // Fix infinite spinner
         alert('Failed to load departments.');
       }
     });
@@ -70,30 +73,30 @@ export class StudentComponent implements OnInit {
       return;
     }
 
-    // Convert selectedDepartmentId to number to ensure type consistency
+    // Rewrite: Find the full department object from the departments array using the selectedDepartmentId
+    // We use selectedDepartmentId (which might be a string if bound with [value]) and convert to Number
     const deptId = Number(this.selectedDepartmentId);
-
-    // Find the selected department object
     const selectedDept = this.departments.find(d => d.idDepartment === deptId);
 
     if (!selectedDept) {
-      console.error('Department not found. Selected ID:', this.selectedDepartmentId, 'Type:', typeof this.selectedDepartmentId);
-      console.error('Available departments:', this.departments.map(d => ({ id: d.idDepartment, type: typeof d.idDepartment })));
       alert('Please select a valid department!');
       return;
     }
 
-    // Set the department object
+    // Set the full department object as requested
     this.newStudent.department = selectedDept;
 
+    this.loading = true;
     this.studentService.add(this.newStudent).subscribe({
       next: (res) => {
         alert('Student Added Successfully! 🎉');
-        this.loadStudents(); // Refresh list
+        this.loading = false;
+        this.loadStudents();
         this.resetForm();
       },
       error: (err) => {
         console.error('Error adding student:', err);
+        this.loading = false;
         alert('Failed to create student. Please try again.');
       }
     });
@@ -106,12 +109,15 @@ export class StudentComponent implements OnInit {
     }
 
     if (confirm('Are you sure you want to delete this student?')) {
+      this.loading = true;
       this.studentService.delete(id).subscribe({
         next: () => {
+          this.loading = false;
           this.loadStudents(); // Refresh list
         },
         error: (err) => {
           console.error('Error deleting student:', err);
+          this.loading = false;
           alert('Delete failed. Please try again.');
         }
       });
