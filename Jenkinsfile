@@ -40,16 +40,20 @@ pipeline {
         }
         
         stage('Deploy to Kubernetes') {
-            steps {
-                sh 'kubectl apply -f k8s-mysql.yaml'
-                sh 'kubectl apply -f k8s-spring.yaml'
-                sh 'kubectl apply -f k8s-frontend.yaml'
-                sh 'kubectl apply -f k8s-monitoring.yaml'
-                
-                // Forcer le redémarrage pour prendre les nouvelles images
-                sh 'kubectl rollout restart deployment/spring-app -n devops'
-                sh 'kubectl rollout restart deployment/frontend -n devops'
-            }
+    steps {
+        withCredentials([file(credentialsId: 'kube-config', variable: 'KUBECONFIG')]) {
+            sh '''
+            export KUBECONFIG=$KUBECONFIG
+            kubectl apply -f k8s-mysql.yaml
+            kubectl apply -f k8s-spring.yaml
+            kubectl apply -f k8s-frontend.yaml
+            kubectl apply -f k8s-monitoring.yaml
+
+            kubectl rollout restart deployment/spring-app -n devops
+            kubectl rollout restart deployment/frontend -n devops
+            '''
         }
+    }
+}
     }
 }
