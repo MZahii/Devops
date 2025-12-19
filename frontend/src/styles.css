@@ -4,8 +4,8 @@
    Light + Dark modes with toggle
    =================================== */
 
-/* Import Google Fonts - Modern & Clean */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+/* Import Google Fonts - Poppins for modern UI */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
 
 /* ===================================
    CSS VARIABLES - LIGHT THEME (DEFAULT)
@@ -102,14 +102,28 @@ html {
 }
 
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     font-size: 15px;
     line-height: 1.6;
     color: var(--text-primary);
-    background: var(--bg-primary);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
+    background-attachment: fixed;
     transition: background 0.3s ease, color 0.3s ease;
     min-height: 100vh;
     overflow-x: hidden;
+    position: relative;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--bg-primary);
+    opacity: 0.95;
+    z-index: -1;
 }
 
 /* ===================================
@@ -162,7 +176,7 @@ h3,
 h4,
 h5,
 h6 {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-weight: 700;
     color: var(--text-primary);
     line-height: 1.2;
@@ -193,7 +207,7 @@ h3 {
 }
 
 .navbar-brand {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-weight: 800;
     font-size: 1.5rem;
     background: var(--primary);
@@ -306,11 +320,13 @@ h3 {
 }
 
 /* ===================================
-   CARDS - Creative Design
+   CARDS - Glassmorphism Design
    =================================== */
 .card {
-    background: var(--bg-secondary) !important;
-    border: 1px solid var(--border-color) !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
     border-radius: var(--border-radius) !important;
     box-shadow: var(--shadow-md) !important;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -341,8 +357,10 @@ h3 {
 }
 
 .card-header {
-    background: var(--bg-tertiary) !important;
-    border-bottom: 1px solid var(--border-color) !important;
+    background: rgba(255, 255, 255, 0.15) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
     padding: 1.25rem !important;
     font-weight: 700;
     color: var(--text-primary) !important;
@@ -711,9 +729,10 @@ h3 {
    UTILITY CLASSES
    =================================== */
 .glass-effect {
-    backdrop-filter: blur(10px);
-    background: rgba(var(--bg-secondary), 0.8);
-    border: 1px solid var(--border-color);
+    backdrop-filter: blur(15px) !important;
+    -webkit-backdrop-filter: blur(15px) !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
 }
 
 ::selection {
